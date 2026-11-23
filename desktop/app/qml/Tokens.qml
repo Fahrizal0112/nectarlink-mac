@@ -552,6 +552,81 @@ QtObject {
               "warning": "#7A4A00"
             }
           }
+        },
+        "mac": {
+          "description": "macOS-native, restrained: warm paper neutrals, one teal accent, hairline rules, flat surfaces, a text-first sidebar and the system font. Generated from the ui-ux-pro-max design system (Minimalism & Swiss, single accent, AA contrast).",
+          "dynamicColor": false,
+          "fonts": {
+            "display": "SF Pro Display",
+            "label": "SF Pro Text",
+            "mono": "SF Mono",
+            "ui": "SF Pro Text"
+          },
+          "label": {
+            "case": "none",
+            "size": 12,
+            "tracking": 0,
+            "weight": 500
+          },
+          "rules": [
+            "Text-first: navigation is a sidebar of words, not icons. Icons appear only where a word cannot do the job (play, send, close).",
+            "One accent (teal) and only on what is active or primary. Success uses the accent, never traffic-light green.",
+            "Flat: 1 px hairlines instead of shadows or gradients. Cards 8 px, controls 6 px.",
+            "4/8 spacing rhythm. Body 13 px, secondary 12 px, never below 11 px. Contrast 4.5:1 for text in both modes.",
+            "System font (SF Pro) on macOS, Figtree where it is missing. Controls change fill, they do not move or scale."
+          ],
+          "shape": {
+            "full": 6,
+            "lg": 8,
+            "md": 6,
+            "sm": 5,
+            "xl": 10,
+            "xs": 3
+          },
+          "variants": {
+            "dark": {
+              "error": "#FF8A80",
+              "onError": "#3B0A06",
+              "onPrimary": "#04302B",
+              "onPrimaryContainer": "#CDEFEA",
+              "onSecondaryContainer": "#ECEBE7",
+              "onSurface": "#ECEBE7",
+              "onSurfaceVariant": "#AAA8A1",
+              "outline": "#74726C",
+              "outlineVariant": "#3A3935",
+              "primary": "#5ED3C4",
+              "primaryContainer": "#173C38",
+              "secondaryContainer": "#34332F",
+              "success": "#5ED3C4",
+              "surface": "#1F1F1D",
+              "surfaceContainer": "#262624",
+              "surfaceContainerHigh": "#2D2D2A",
+              "surfaceContainerHighest": "#363633",
+              "surfaceContainerLow": "#191917",
+              "warning": "#E6B450"
+            },
+            "light": {
+              "error": "#B42318",
+              "onError": "#FFFFFF",
+              "onPrimary": "#FFFFFF",
+              "onPrimaryContainer": "#0A3F3A",
+              "onSecondaryContainer": "#1C1B19",
+              "onSurface": "#1C1B19",
+              "onSurfaceVariant": "#5A5853",
+              "outline": "#8C8982",
+              "outlineVariant": "#E3E1DB",
+              "primary": "#0B6B63",
+              "primaryContainer": "#DCEDEA",
+              "secondaryContainer": "#E9E7E2",
+              "success": "#0B6B63",
+              "surface": "#FFFFFF",
+              "surfaceContainer": "#F8F7F4",
+              "surfaceContainerHigh": "#F0EFEB",
+              "surfaceContainerHighest": "#E7E5E0",
+              "surfaceContainerLow": "#F3F2EE",
+              "warning": "#8A5A00"
+            }
+          }
         }
       },
       "typography": {

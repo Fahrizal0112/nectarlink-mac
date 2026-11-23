@@ -23,6 +23,8 @@ pub enum Theme {
     Graphite,
     /// Windows 11's own look (WinUI 3), with the system accent color.
     Fluent,
+    /// macOS-native and restrained: system font, hairlines, a text-first sidebar.
+    Mac,
 }
 
 impl Theme {
@@ -34,7 +36,13 @@ impl Theme {
             Theme::Glass => "glass",
             Theme::Graphite => "graphite",
             Theme::Fluent => "fluent",
+            Theme::Mac => "mac",
         }
+    }
+
+    /// What a fresh install starts with: the Mac look on macOS, Bloom elsewhere.
+    pub fn platform_default() -> Theme {
+        if cfg!(target_os = "macos") { Theme::Mac } else { Theme::default() }
     }
 
     /// A theme by name; anything unknown is Bloom, the default.
@@ -44,6 +52,7 @@ impl Theme {
             "graphite" => Theme::Graphite,
             "glass" | "blurry" => Theme::Glass,
             "fluent" => Theme::Fluent,
+            "mac" => Theme::Mac,
             _ => Theme::Bloom,
         }
     }
@@ -931,7 +940,7 @@ impl Settings {
 impl Default for Settings {
     fn default() -> Self {
         Settings {
-            theme: Theme::default(),
+            theme: Theme::platform_default(),
             seed: "wallpaper".into(),
             color_mode: ColorMode::default(),
             amoled: false,
@@ -1220,7 +1229,7 @@ mod tests {
 
     #[test]
     fn every_theme_keeps_its_name() {
-        for theme in [Theme::Bloom, Theme::Hive, Theme::Glass, Theme::Graphite, Theme::Fluent] {
+        for theme in [Theme::Bloom, Theme::Hive, Theme::Glass, Theme::Graphite, Theme::Fluent, Theme::Mac] {
             assert_eq!(Theme::parse(theme.name()), theme);
         }
         assert_eq!(Theme::parse("Fluent "), Theme::Fluent);

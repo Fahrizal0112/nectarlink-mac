@@ -10,8 +10,8 @@ FocusScope {
     property string label
     signal toggled(bool checked)
 
-    implicitWidth: Theme.fluent ? 40 : 46
-    implicitHeight: Theme.fluent ? 20 : 28
+    implicitWidth: Theme.flat ? 40 : 46
+    implicitHeight: Theme.flat ? 20 : 28
     activeFocusOnTab: true
     opacity: enabled ? 1 : 0.38
 
@@ -43,7 +43,7 @@ FocusScope {
     // pointer and stretches while pressed.
     Rectangle {
         id: fluentTrack
-        visible: Theme.fluent
+        visible: Theme.flat
         anchors.fill: parent
         radius: height / 2
         color: toggle.checked
@@ -71,7 +71,7 @@ FocusScope {
 
     Rectangle {
         id: track
-        visible: !Theme.fluent
+        visible: !Theme.flat
         anchors.fill: parent
         radius: Theme.graphite ? Theme.radiusSm : height / 2
         color: Theme.glass

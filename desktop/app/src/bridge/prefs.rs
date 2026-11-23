@@ -35,7 +35,7 @@ pub mod qobject {
         #[qobject]
         #[qml_element]
         #[qml_singleton]
-        /// "bloom", "hive", "glass", "graphite" or "fluent".
+        /// "bloom", "hive", "glass", "graphite", "fluent" or "mac".
         #[qproperty(QString, theme)]
         /// Bloom colors: "wallpaper", or a preset: "honey", "sage", "lavender"
         /// or "ocean".

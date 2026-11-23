@@ -12,8 +12,8 @@ FocusScope {
     property bool activeHover: mouse.containsMouse
     signal clicked
 
-    implicitWidth: 72
-    implicitHeight: 56
+    implicitWidth: Theme.mac ? Theme.railWidth - 24 : 72
+    implicitHeight: Theme.mac ? 30 : 56
     activeFocusOnTab: true
 
     Accessible.role: Accessible.PageTab
@@ -53,8 +53,34 @@ FocusScope {
         }
     }
 
+    // Mac: a row of words, like the sidebar in Finder or Mail. No icon: the
+    // word is the label. The selected row takes the accent's wash.
+    Rectangle {
+        visible: Theme.mac
+        anchors.fill: parent
+        radius: Theme.radiusMd
+        color: item.selected
+            ? Theme.primaryContainer
+            : (mouse.pressed ? Theme.subtleFillSecondary : (item.activeHover ? Theme.subtleFillTertiary : "transparent"))
+        Behavior on color { enabled: !Theme.reduceMotion; ColorAnimation { duration: 120 } }
+        Txt {
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
+            text: item.text
+            role: "body"
+            size: 13
+            weight: item.selected ? 600 : 400
+            elide: Text.ElideRight
+            color: item.selected ? Theme.primaryContainerContent : Theme.surfaceContent
+        }
+    }
+
     Rectangle {
         id: pill
+        visible: !Theme.mac
         anchors.horizontalCenter: parent.horizontalCenter
         y: Theme.fluent ? 6 : 2
         width: 52; height: Theme.fluent ? 24 : 30
@@ -109,6 +135,7 @@ FocusScope {
         }
     }
     Txt {
+        visible: !Theme.mac
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: pill.bottom
         anchors.topMargin: 4
@@ -123,9 +150,9 @@ FocusScope {
         }
     }
     Rectangle {
-        anchors.fill: Theme.fluent ? item : pill
-        anchors.margins: Theme.fluent ? 0 : -3
-        radius: Theme.fluent ? 6 : pill.radius + 3
+        anchors.fill: Theme.flat ? item : pill
+        anchors.margins: Theme.flat ? 0 : -3
+        radius: Theme.flat ? Theme.radiusMd : pill.radius + 3
         color: "transparent"
         border.width: 2
         border.color: Theme.primary

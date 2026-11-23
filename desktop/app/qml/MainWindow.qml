@@ -417,7 +417,7 @@ NativeWindow {
 
     // Window background: a tinted veil of the theme over Mica/Acrylic (so the
     // theme's seed color is rich and clear), opaque otherwise.
-    readonly property color windowSurface: Theme.graphite || Theme.amoled || Theme.hive || Theme.fluent
+    readonly property color windowSurface: Theme.graphite || Theme.amoled || Theme.hive || Theme.flat
         ? Theme.surface
         : Qt.tint(
             Theme.surface,
@@ -576,11 +576,21 @@ NativeWindow {
         visible: !window.welcome
         width: Theme.railWidth
         height: parent.height
-        color: "transparent"
+        color: Theme.railColor
         property string hoveredNav: ""
+
+        // Mac: the sidebar is a tone of its own, edged by a hairline.
+        Rectangle {
+            visible: Theme.mac
+            anchors.right: parent.right
+            width: 1
+            height: parent.height
+            color: Theme.outlineVariant
+        }
 
         Rectangle {
             id: mark
+            visible: !Theme.mac
             anchors.horizontalCenter: parent.horizontalCenter
             // Centered on the top bar, level with the page title and the window buttons.
             y: (Theme.topBarHeight - height) / 2
@@ -594,11 +604,23 @@ NativeWindow {
                 color: Theme.graphite ? Theme.surface : Theme.primaryContent
             }
         }
+        // Mac: the name in words, level with the title bar.
+        Txt {
+            visible: Theme.mac
+            anchors.left: parent.left
+            anchors.leftMargin: 22
+            y: (Theme.topBarHeight - height) / 2
+            text: "NectarLink"
+            role: "title"
+            size: 15
+            weight: 650
+            color: Theme.surfaceContent
+        }
         Column {
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: mark.bottom
-            anchors.topMargin: 31
-            spacing: 6
+            anchors.top: Theme.mac ? parent.top : mark.bottom
+            anchors.topMargin: Theme.mac ? Theme.topBarHeight + 4 : 31
+            spacing: Theme.mac ? 2 : 6
             NavItem {
                 iconPath: Icons.home
                 text: qsTr("Home")
@@ -689,12 +711,23 @@ NativeWindow {
             }
         }
         IconButton {
+            visible: !Theme.mac
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 18
             iconPath: Icons.plus
             label: qsTr("Pair a new device")
             tonal: true
+            onClicked: window.openPairing()
+        }
+        Button {
+            visible: Theme.mac
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 16
+            width: parent.width - 24
+            text: qsTr("Pair a device")
+            variant: "tonal"
             onClicked: window.openPairing()
         }
     }
@@ -710,7 +743,7 @@ NativeWindow {
         // Fluent: pages sit on one layer over Mica, rounded at the top left with
         // a hairline, as in WinUI's NavigationView. The title bar stays on Mica.
         Rectangle {
-            visible: Theme.fluent
+            visible: Theme.flat
             x: 0
             y: Theme.topBarHeight
             width: parent.width + 1

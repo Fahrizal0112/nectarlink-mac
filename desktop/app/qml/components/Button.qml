@@ -17,7 +17,7 @@ FocusScope {
     readonly property bool small: size === "sm"
     readonly property bool interactive: enabled && !busy
     readonly property color background: {
-        if (Theme.fluent) {
+        if (Theme.flat) {
             if (variant === "fill")
                 return mouse.pressed ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.80)
                     : (mouse.containsMouse ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.90) : Theme.primary)
@@ -38,7 +38,7 @@ FocusScope {
         return "transparent"
     }
     readonly property color foreground: {
-        if (Theme.fluent) {
+        if (Theme.flat) {
             if (variant === "fill")
                 return mouse.pressed ? Qt.rgba(Theme.primaryContent.r, Theme.primaryContent.g, Theme.primaryContent.b, 0.70) : Theme.primaryContent
             return mouse.pressed ? Theme.surfaceContentVariant : Theme.surfaceContent
@@ -52,8 +52,8 @@ FocusScope {
         return Theme.surfaceContent
     }
 
-    implicitHeight: Theme.fluent ? (small ? 28 : 32) : (small ? 32 : 40)
-    implicitWidth: row.implicitWidth + (variant === "text" ? 20 : (Theme.fluent ? 24 : (small ? 26 : 36)))
+    implicitHeight: Theme.flat ? (small ? 28 : 32) : (small ? 32 : 40)
+    implicitWidth: row.implicitWidth + (variant === "text" ? 20 : (Theme.flat ? 24 : (small ? 26 : 36)))
     activeFocusOnTab: true
     opacity: enabled ? 1 : 0.38
 
@@ -95,9 +95,9 @@ FocusScope {
         radius: Theme.pill(height)
         color: button.background
         Behavior on color { enabled: !Theme.reduceMotion; ColorAnimation { duration: Theme.fadeFast } }
-        border.width: Theme.fluent ? (button.variant === "text" ? 0 : 1)
+        border.width: Theme.flat ? (button.variant === "text" ? 0 : 1)
             : (button.variant === "outline" || (Theme.glass && (button.variant === "tonal" || button.variant === "fill")) ? 1 : 0)
-        border.color: Theme.fluent
+        border.color: Theme.flat
             ? (button.variant === "fill" ? Qt.rgba(1, 1, 1, 0.08) : Theme.controlStroke)
             : button.variant === "outline"
             ? (Theme.glass ? Qt.rgba(1, 1, 1, Theme.dark ? 0.14 : 0.38)
@@ -119,7 +119,7 @@ FocusScope {
 
         // Fluent: the darker hairline along the bottom that makes a control look raised.
         Rectangle {
-            visible: Theme.fluent && button.variant !== "text" && !mouse.pressed
+            visible: Theme.flat && button.variant !== "text" && !mouse.pressed
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -131,7 +131,7 @@ FocusScope {
 
         // Hover & Press state layer (Fluent changes the fill itself).
         Rectangle {
-            visible: !Theme.fluent
+            visible: !Theme.flat
             anchors.fill: parent
             radius: parent.radius
             color: button.foreground
@@ -162,7 +162,7 @@ FocusScope {
                 role: "label"
                 color: button.foreground
                 size: Theme.graphite ? 11 : (button.small ? 13 : 14)
-                weight: Theme.fluent ? 400 : (Theme.graphite ? Theme.labelStyle.weight : Theme.typography.label.weight)
+                weight: Theme.flat ? 400 : (Theme.graphite ? Theme.labelStyle.weight : Theme.typography.label.weight)
                 font.underline: Theme.graphite && button.variant === "text"
                 maximumLineCount: 1
                 elide: Text.ElideRight

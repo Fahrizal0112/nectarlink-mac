@@ -4,8 +4,8 @@ import QtQuick
 import app.nectarlink
 
 // The active theme: Bloom (Material You, seed presets, the default), Hive
-// (honey on charcoal or wax), Glass, Graphite (paper and slate), or Fluent
-// (Windows 11's own look), light or dark, resolved from Preferences and the system. Colors
+// (honey on charcoal or wax), Glass, Graphite (paper and slate), Fluent
+// (Windows 11's own look) or Mac (the macOS look, default on a Mac), light or dark, resolved from Preferences and the system. Colors
 // come from Tokens (generated from docs/design/tokens.json); Material's
 // "onX" roles are named "xContent" because QML reserves the "on" prefix.
 QtObject {
@@ -16,6 +16,12 @@ QtObject {
     readonly property bool glass: Preferences.theme === "glass" || Preferences.theme === "blurry"
     // Windows 11 (WinUI 3): Mica, layered cards, 4 px controls, the system accent.
     readonly property bool fluent: Preferences.theme === "fluent"
+    // macOS look: system font, flat surfaces with hairlines, a text-first
+    // sidebar, one teal accent (docs/design/tokens.json, theme "mac").
+    readonly property bool mac: Preferences.theme === "mac"
+    // Fluent and Mac share one control language: hairline strokes, fills that
+    // change instead of controls that move, the arrow cursor.
+    readonly property bool flat: fluent || mac
     // Windows' accent ({ light, dark }), or null elsewhere: Fluent then uses its own blue.
     readonly property var systemAccent: AppController.systemAccent !== ""
         ? JSON.parse(AppController.systemAccent) : null
@@ -126,8 +132,10 @@ QtObject {
             ? Tokens.data.themes.graphite.variants[dark ? "slate" : "paper"]
             : (fluent
                 ? Tokens.data.themes.fluent.variants[dark ? "dark" : "light"]
-                : seedColors[dark ? "dark" : "light"]))
-    readonly property var status: graphite || hive || fluent ? palette : Tokens.data.themes.bloom.status[dark ? "dark" : "light"]
+                : (mac
+                    ? Tokens.data.themes.mac.variants[dark ? "dark" : "light"]
+                    : seedColors[dark ? "dark" : "light"])))
+    readonly property var status: graphite || hive || fluent || mac ? palette : Tokens.data.themes.bloom.status[dark ? "dark" : "light"]
 
     // ---- Color roles ----
     readonly property color primary: fluent && systemAccent ? systemAccent[dark ? "dark" : "light"] : palette.primary
@@ -163,7 +171,8 @@ QtObject {
     // Hive: nearly opaque, so the comb shows through as texture without
     // ever crossing text.
     // Fluent: WinUI's card fill over the page layer (CardBackgroundFillColorDefault).
-    readonly property color cardColor: fluent
+    readonly property color cardColor: mac ? surfaceContainer
+        : fluent
         ? (dark ? Qt.rgba(1, 1, 1, 0.051) : Qt.rgba(1, 1, 1, 0.70))
         : hive
         ? (function() {
@@ -185,7 +194,8 @@ QtObject {
                         Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, isPhoneSeed ? (dark ? 0.28 : 0.36) : (dark ? 0.16 : 0.22))
                     ))))
     // Hive: a faint honey edge, like wax around a cell.
-    readonly property color cardBorder: fluent
+    readonly property color cardBorder: mac ? outlineVariant
+        : fluent
         ? (dark ? Qt.rgba(0, 0, 0, 0.10) : Qt.rgba(0, 0, 0, 0.059))
         : hive
         ? Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.14 : 0.16)
@@ -195,7 +205,8 @@ QtObject {
             : (artworkAmbientActive
                 ? Qt.rgba(outlineVariant.r, outlineVariant.g, outlineVariant.b, dark ? 0.36 : 0.45)
                 : (amoled ? "#1D1F27" : "transparent")))
-    readonly property color tileColor: fluent
+    readonly property color tileColor: mac ? surfaceContainerHigh
+        : fluent
         ? (dark ? Qt.rgba(1, 1, 1, 0.061) : Qt.rgba(1, 1, 1, 0.70))
         : hive
         ? Qt.tint(surfaceContainerHigh, Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, dark ? 0.14 : 0.20))
@@ -213,7 +224,7 @@ QtObject {
                         surfaceContainerHigh,
                         Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, isPhoneSeed ? (dark ? 0.32 : 0.42) : (dark ? 0.18 : 0.24))
                     ))))
-    readonly property color heroColor: fluent ? cardColor
+    readonly property color heroColor: mac || fluent ? cardColor
         : hive
         ? Qt.tint(surface, Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, dark ? 0.55 : 0.62))
         : graphite ? "transparent"
@@ -223,9 +234,10 @@ QtObject {
                 : (amoled ? "#090A0E" : surface),
             Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, glass ? (dark ? 0.30 : 0.38) : (artworkAmbientActive ? 0.52 : (amoled ? 0.32 : 0.68)))
         )
-    readonly property color heroContent: graphite || fluent ? surfaceContent : primaryContainerContent
+    readonly property color heroContent: graphite || flat ? surfaceContent : primaryContainerContent
     // Hive's rail is the comb itself; Fluent's sits straight on Mica.
-    readonly property color railColor: graphite || hive || fluent ? "transparent"
+    // Mac: the sidebar is its own quiet tone, as in Finder and Mail.
+    readonly property color railColor: mac ? surfaceContainerLow : (graphite || hive || fluent) ? "transparent"
         : (glass
             ? Qt.rgba(surfaceLow.r, surfaceLow.g, surfaceLow.b, amoled ? 0.48 : (dark ? 0.28 : 0.42))
             : (artworkAmbientActive
@@ -237,9 +249,9 @@ QtObject {
                         Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, isPhoneSeed ? (dark ? 0.24 : 0.32) : (dark ? 0.14 : 0.18))
                     ))))
     readonly property color indicator: graphite ? surfaceContent
-        : (hive ? primaryContainer : (fluent ? subtleFillSecondary : secondaryContainer))
+        : (hive ? primaryContainer : (flat ? subtleFillSecondary : secondaryContainer))
     readonly property color indicatorContent: graphite ? surface
-        : (hive ? primaryContainerContent : (fluent ? surfaceContent : secondaryContainerContent))
+        : (hive ? primaryContainerContent : (flat ? surfaceContent : secondaryContainerContent))
 
     // ---- Fluent (WinUI 3) fills and strokes ----
     // Subtle fills: hover, selection and press on borderless things (nav items, list rows).
@@ -266,7 +278,8 @@ QtObject {
     // ---- Shape ----
     readonly property var shape: graphite ? Tokens.data.themes.graphite.shape
         : (hive ? Tokens.data.themes.hive.shape
-            : (fluent ? Tokens.data.themes.fluent.shape : Tokens.data.themes.bloom.shape))
+            : (fluent ? Tokens.data.themes.fluent.shape
+                : (mac ? Tokens.data.themes.mac.shape : Tokens.data.themes.bloom.shape)))
     readonly property int radiusXs: shape.xs
     readonly property int radiusSm: shape.sm
     readonly property int radiusMd: shape.md
@@ -274,7 +287,7 @@ QtObject {
     readonly property int radiusXl: shape.xl
     // "Pill": half the height of whatever uses it, in Bloom. Graphite and
     // Fluent use their own small corner instead.
-    function pill(height) { return graphite || fluent ? shape.full : height / 2 }
+    function pill(height) { return graphite || flat ? shape.full : height / 2 }
 
     // ---- Type ----
     // Bundled with the app (assets/fonts).
@@ -289,9 +302,12 @@ QtObject {
     }
     readonly property string fluentText: firstFont(["Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI"], "Figtree")
     readonly property string fluentDisplay: firstFont(["Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI"], "Figtree")
-    readonly property string fontUi: fluent ? fluentText : "Figtree"
-    readonly property string fontDisplay: graphite ? "Instrument Serif" : (fluent ? fluentDisplay : "Figtree")
-    readonly property string fontMono: "Space Mono"
+    // Mac uses the system font (SF Pro) and falls back to the bundled Figtree.
+    readonly property string macText: firstFont(["SF Pro Text", ".AppleSystemUIFont", "Helvetica Neue"], "Figtree")
+    readonly property string macDisplay: firstFont(["SF Pro Display", ".AppleSystemUIFont", "Helvetica Neue"], "Figtree")
+    readonly property string fontUi: fluent ? fluentText : (mac ? macText : "Figtree")
+    readonly property string fontDisplay: graphite ? "Instrument Serif" : (fluent ? fluentDisplay : (mac ? macDisplay : "Figtree"))
+    readonly property string fontMono: mac ? firstFont(["SF Mono", "Menlo"], "Space Mono") : "Space Mono"
     // Caption button glyphs: Segoe Fluent Icons ships with Windows 11 only;
     // Windows 10's Segoe MDL2 Assets has the same code points.
     readonly property string captionIconFont: Qt.fontFamilies().indexOf("Segoe Fluent Icons") >= 0
@@ -299,11 +315,13 @@ QtObject {
     readonly property var typography: Tokens.data.typography
     readonly property var labelStyle: graphite ? Tokens.data.themes.graphite.label
         : (hive ? Tokens.data.themes.hive.label
-            : (fluent ? Tokens.data.themes.fluent.label : Tokens.data.themes.bloom.label))
+            : (fluent ? Tokens.data.themes.fluent.label
+                : (mac ? Tokens.data.themes.mac.label : Tokens.data.themes.bloom.label)))
 
     // ---- Layout and spacing ----
     readonly property var layout: Tokens.data.layout.desktop
-    readonly property int railWidth: layout.railWidth
+    // Mac: a 208 px sidebar of words instead of the 80 px icon rail.
+    readonly property int railWidth: mac ? 208 : layout.railWidth
     readonly property int topBarHeight: layout.topBarHeight
     readonly property int contentPadding: layout.contentPadding
     readonly property int gutter: layout.gutter
@@ -330,8 +348,8 @@ QtObject {
     readonly property int fadeFast: Tokens.data.motion.fade.fast
     readonly property int fadeNormal: Tokens.data.motion.fade.normal
     // Fluent controls don't move or shrink: they change fill.
-    readonly property real hoverLift: reduceMotion || fluent ? 0 : Tokens.data.motion.hoverLift
-    readonly property real pressScale: reduceMotion || fluent ? 1 : Tokens.data.motion.pressScale
+    readonly property real hoverLift: reduceMotion || flat ? 0 : Tokens.data.motion.hoverLift
+    readonly property real pressScale: reduceMotion || flat ? 1 : Tokens.data.motion.pressScale
     // Windows uses the arrow over controls; the hand is for links.
-    readonly property int controlCursor: fluent ? Qt.ArrowCursor : Qt.PointingHandCursor
+    readonly property int controlCursor: flat ? Qt.ArrowCursor : Qt.PointingHandCursor
 }

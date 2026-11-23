@@ -54,9 +54,9 @@ FocusScope {
         id: track
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width
-        height: Theme.fluent ? 4 : 6
+        height: Theme.flat ? 4 : 6
         radius: height / 2
-        color: Theme.fluent ? Theme.controlStrong : Theme.surfaceContainerHighest
+        color: Theme.flat ? Theme.controlStrong : Theme.surfaceContainerHighest
         border.width: Theme.graphite ? 1 : 0
         border.color: Theme.outlineVariant
 
@@ -76,7 +76,7 @@ FocusScope {
     // Fluent: WinUI's thumb, a raised disc with an accent dot that grows under
     // the pointer and shrinks while dragged.
     Rectangle {
-        visible: Theme.fluent
+        visible: Theme.flat
         x: Math.max(0, Math.min(slider.width - width, fill.width - width / 2))
         anchors.verticalCenter: parent.verticalCenter
         width: 20; height: 20; radius: 10
@@ -95,7 +95,7 @@ FocusScope {
 
     Rectangle {
         id: handle
-        visible: !Theme.fluent
+        visible: !Theme.flat
         x: Math.max(0, Math.min(slider.width - width, fill.width - width / 2))
         anchors.verticalCenter: parent.verticalCenter
         width: 16; height: 16; radius: 8

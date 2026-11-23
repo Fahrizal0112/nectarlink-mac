@@ -392,14 +392,14 @@ Item {
                     required property var modelData
                     readonly property bool selected: page.currentSection === modelData.id
                     readonly property bool isHovered: railCol.hoveredCategoryId === modelData.id && navMouse.containsMouse
-                    readonly property color fg: selected && !Theme.fluent
+                    readonly property color fg: selected && !Theme.flat
                         ? (Theme.graphite ? Theme.surface : Theme.secondaryContainerContent)
                         : Theme.surfaceContent
                     width: railCol.width
                     height: 42
                     radius: Theme.radiusMd
                     activeFocusOnTab: true
-                    color: Theme.fluent
+                    color: Theme.flat
                         ? (navMouse.pressed ? Theme.subtleFillTertiary : (selected || isHovered ? Theme.subtleFillSecondary : "transparent"))
                         : selected
                         ? (Theme.graphite ? Theme.surfaceContent : Theme.secondaryContainer)
@@ -774,7 +774,8 @@ Item {
                                     { value: "bloom", label: qsTr("Bloom") },
                                     { value: "glass", label: qsTr("Glass") },
                                     { value: "graphite", label: qsTr("Graphite") },
-                                    { value: "fluent", label: qsTr("Fluent") }
+                                    { value: "fluent", label: qsTr("Fluent") },
+                                    { value: "mac", label: qsTr("Mac") }
                                 ]
                                 value: Theme.hive ? "hive" : (Theme.glass ? "glass" : Preferences.theme)
                                 onPicked: (value) => Preferences.theme = value
@@ -813,11 +814,11 @@ Item {
                             }
                         }
                         // Hive's colors are fixed, and Fluent follows Windows' accent: no seed to pick.
-                        Divider { width: parent.width; visible: !Theme.graphite && !Theme.hive && !Theme.fluent }
+                        Divider { width: parent.width; visible: !Theme.graphite && !Theme.hive && !Theme.flat }
                         ListRow {
                             id: colorRow
                             width: parent.width
-                            visible: !Theme.graphite && !Theme.hive && !Theme.fluent
+                            visible: !Theme.graphite && !Theme.hive && !Theme.flat
                             stackBelow: true
                             iconPath: Icons.colorSwatch
                             title: qsTr("Color")
